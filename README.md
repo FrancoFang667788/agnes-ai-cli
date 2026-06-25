@@ -20,6 +20,10 @@
 - [可用模型](#可用模型)
 - [常见问题](#常见问题)
 - [Claude Code 集成](#claude-code-集成)
+  - [安装 Claude Code](#安装-claude-code)
+  - [安装本 Skill](#安装本-skill)
+  - [使用方式](#使用方式)
+  - [Skill 工作原理](#skill-工作原理)
 - [开源协议](#开源协议)
 
 ---
@@ -344,13 +348,118 @@ python3 scripts/agnes-image.py --prompt "一朵玫瑰" --model agnes-image-2.1-f
 
 ## Claude Code 集成
 
-本项目也可以作为 [Claude Code](https://claude.com/claude-code) 的 Skill 使用。安装后，你可以直接用自然语言让 Claude 帮你生成图片和视频，例如：
+本项目可以作为 [Claude Code](https://claude.com/claude-code) 的 **Skill**（技能插件）使用。安装后，你可以直接用自然语言让 Claude 帮你生成图片和视频，不需要记任何命令。
 
-- "帮我画一张赛博朋克风格的城市"
-- "识别一下这张图片的内容"
-- "生成一段日出延时视频"
+### 什么是 Claude Code？
 
-详见 `SKILL.md`。
+[Claude Code](https://claude.com/claude-code) 是 Anthropic 推出的命令行 AI 助手，可以在终端里和 Claude 对话，让它帮你写代码、操作文件、执行命令等。Skill 是 Claude Code 的插件系统，安装 Skill 后 Claude 就能获得新的能力。
+
+### 安装 Claude Code
+
+如果你还没装 Claude Code，先安装：
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+安装完成后，在终端输入 `claude` 就能启动。
+
+### 安装本 Skill
+
+**第一步：** 创建 Skill 目录
+
+```bash
+mkdir -p ~/.claude/skills/images-agnes-ai
+```
+
+**第二步：** 把项目文件复制到 Skill 目录
+
+```bash
+# 先 clone 项目（如果还没 clone）
+git clone https://github.com/FrancoFang667788/agnes-ai-cli.git
+
+# 复制文件到 Skill 目录
+cp -r agnes-ai-cli/* ~/.claude/skills/images-agnes-ai/
+```
+
+**第三步：** 配置 API Key
+
+```bash
+# 方式一：环境变量（推荐写入 ~/.zshrc 永久生效）
+echo 'export AGNES_API_KEY="你的API Key"' >> ~/.zshrc
+source ~/.zshrc
+
+# 方式二：写入文件
+echo "你的API Key" > ~/.agnes-ai-key
+```
+
+**第四步：** 验证安装
+
+启动 Claude Code：
+
+```bash
+claude
+```
+
+然后输入：
+
+```
+帮我画一张可爱的猫咪图片
+```
+
+如果 Claude 能成功调用 Agnes AI 生成图片，说明安装成功！
+
+### 使用方式
+
+安装完成后，你只需要用自然语言和 Claude 对话，它会自动识别并调用对应的功能：
+
+**生成图片：**
+
+```
+> 画一张赛博朋克风格的东京夜景
+> 生成一张水墨画风格的山水图，保存到桌面
+> 画3张不同风格的猫咪头像
+```
+
+**图片风格转换：**
+
+```
+> 把 ~/Desktop/photo.jpg 转成油画风格
+> 把这张图片变成动漫风格
+```
+
+**图片识别：**
+
+```
+> 识别一下 ~/Desktop/photo.jpg 里面有什么
+> 这张图片里的植物是什么品种？
+```
+
+**生成视频：**
+
+```
+> 生成一段樱花飘落的视频
+> 把 ~/Desktop/girl.png 这张图片做成视频，让她转过身
+```
+
+### Skill 工作原理
+
+当你在 Claude Code 中提到图片生成、识别、视频等关键词时，Claude 会自动加载 `SKILL.md` 中的配置，然后调用 `scripts/` 目录下的 Python 脚本与 Agnes AI API 交互。你不需要手动输入任何命令，Claude 会帮你处理一切。
+
+### 目录结构
+
+安装完成后，Skill 目录结构如下：
+
+```
+~/.claude/skills/images-agnes-ai/
+├── SKILL.md              # Skill 配置文件（Claude 读取这个来了解能力）
+├── README.md             # 本说明文档
+├── LICENSE               # 开源协议
+├── .gitignore            # Git 忽略规则
+└── scripts/
+    ├── agnes-image.py    # 图片生成/识别脚本
+    └── agnes-video.py    # 视频生成脚本
+```
 
 ---
 
